@@ -88,4 +88,22 @@ class MerchantRepository {
             return $e->getMessage();
         }
     }
+
+    public function getTransaction(String $transcationId)
+    {
+        try {
+            $response = Http::withHeader('Authorization', session('api_token'))
+                ->post(env('MERCHANT_API_URI') . "transaction", [
+                    'transactionId' => $transcationId
+                ]);
+
+                $body = json_decode($response->getBody()->getContents());
+
+                return $body;
+        } catch (\Exception $e) {
+            session()->forget('api_token');
+
+            return $e->getMessage();
+        }
+    }
 }

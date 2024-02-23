@@ -30,19 +30,21 @@ class DashboardController extends Controller
      */
     public function reports(): Response 
     {
-        $reports = $this->merchantService->getTransactionsReport('2010-01-01', '2024-03-01', 1);
+        return Inertia::render('Reports');
+    }
 
-        return Inertia::render('Reports', [
-            'reports' => $reports['data']
-        ]);
+    public function getReports(Request $request): JsonResponse
+    {
+        ['fromDate' => $fromDate, 'toDate' => $toDate, 'page' => $page] = $request->all();
+
+        $reports = $this->merchantService->getTransactionsReport($fromDate, $toDate, $page);
+
+        return response()->json(['success' => true, 'data' => $reports['data']]);
     }
 
     public function transactions(): Response 
     {
-
-        //$transactions = $this->merchantService->getTransactionList();
-
-        return Inertia::render('Transactions', ['apiToken' => session('api_token'), 'title' => 'This is the title']);
+        return Inertia::render('Transactions');
     }
 
     public function getTransactions(Request $request): JsonResponse 
@@ -54,10 +56,12 @@ class DashboardController extends Controller
         return response()->json(['success' => true, 'data' => $transactions['data']]);
     }
 
-    public function clients(): Response 
+    public function getTransaction(): JsonResponse
     {
-        $clients = $this->merchantService->getClient();
+        ['transactionId' => $transactionId] = request()->all();
 
-        return Inertia::render('Clients');
+        $transaction = $this->merchantService->getTransaction($transactionId);
+
+        return response()->json(['success' => true, 'data' => $transaction['data']]);
     }
 }
