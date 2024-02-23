@@ -33,9 +33,19 @@ class MerchantService
         }
     }
 
-    public function getTransactionList() 
+    public function getTransactionList($fromDate, $toDate, $page = 1) 
     {
-        
+        try {
+            $response = $this->merchantRepository->getTransactionList($fromDate, $toDate, $page);
+
+            return ['success' => true, 'data' => $response];
+        } catch (\Exception $e) {
+            if ($e->getMessage() === "Token expired") {
+                $this->merchantRepository->setToken();
+
+                return ['success' => false, 'data' => [], 'message' => $e->getMessage()];
+            }
+        }
     }
 
     public function getTransaction(int $transcationId)

@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{o as c,f as n}from"./app-B58ODL8K.js";const e={},t={src:"/img/financialhouse-logo.png",alt:"Financial House"};function r(s,a){return c(),n("img",t)}const f=o(e,[["render",r]]);export{f as A};

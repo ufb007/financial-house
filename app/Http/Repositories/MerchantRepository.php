@@ -62,8 +62,30 @@ class MerchantRepository {
         }
     }
 
-    public function getTransactionList() 
+    public function getTransactionList(String $fromDate, String $toDate, int $page = 1) 
     {
+        try {
+            $response = Http::withHeader('Authorization', session('api_token'))
+                ->post(env('MERCHANT_API_URI') . "transaction/list?page=$page", [
+                    'fromDate' => $fromDate,
+                    'toDate' => $toDate
+            ]);
 
+            $body = json_decode($response->getBody()->getContents());
+
+            if (isset($body?->status) && $body->status === 'APPROVED') {
+                return $body->response;
+            }
+
+            if (isset($body?->data)) {
+                return $body;
+            }
+
+            throw new \Exception($body->message);
+        } catch (\Exception $e) {
+            session()->forget('api_token');
+
+            return $e->getMessage();
+        }
     }
 }
