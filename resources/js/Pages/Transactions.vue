@@ -19,14 +19,21 @@
         transaction: {}
     });
 
+    /**
+     * Retrieves transactions from the server.
+     *
+     * @param {number} page - The page number to retrieve
+     * @return {Promise} The promise of the transaction retrieval
+     */
     const getTransactions = async (page) => {
-        return await axios.post('/get-transactions', {
-            fromDate: fromDate.value,
-            toDate: toDate.value,
-            page
-        });
+        return await axios(`/get-transactions/${fromDate.value}/${toDate.value}/${page}`);
     }
 
+    /**
+     * A function that handles the date filter.
+     *
+     * @return {Promise<void>} Promise that resolves when the function is complete
+     */
     const dateFilterHandler = async () => {
         loading.value = true;
 
@@ -45,10 +52,16 @@
         transactions.value = response.data.data;
     }
 
+    /**
+     * Function to retrieve a single transaction using the provided transactionId.
+     *
+     * @param {string} transactionId - The ID of the transaction to retrieve
+     * @return {Promise} The promise of the retrieved transaction
+     */
     const getSingleTransaction = async (transactionId) => {
         modalActive.value = true;
 
-        const $response = await axios.post('/get-transaction', { transactionId});
+        const $response = await axios(`/get-transaction/${transactionId}`);
 
         if ($response.statusText === 'OK') {
             singleTransaction.value = {
@@ -58,6 +71,12 @@
         }
     }
 
+    /**
+     * async function that handles the click event for the previous and next page buttons.
+     *
+     * @param {string} page - the page string containing the page number
+     * @return {Promise<void>} a promise that resolves with no value
+     */
     const onClickPrevNext = async (page) => {
         if (page !== null && page !== undefined) {
             loading.value = true;

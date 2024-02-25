@@ -19,13 +19,15 @@
     });
 
     const getRports = async (page) => {
-        return await axios.post('/get-reports', {
-            fromDate: fromDate.value,
-            toDate: toDate.value,
-            page
-        });
+        return await axios(`/get-reports/${fromDate.value}/${toDate.value}/${page}`);
     }
 
+    /**
+     * This function handles the date filtering process asynchronously. It sets the loading state to true, processes the date values, clears the reports array, fetches new reports, sets the loading state to false, and updates the reports array with the fetched data.
+     *
+     * @param {void} - No parameters
+     * @return {Promise<void>} - A promise that resolves when the date filtering process is completed
+     */
     const dateFilterHandler = async () => {
         loading.value = true;
 
@@ -56,8 +58,6 @@
        if (response.statusText === 'OK') {
            reports.value = response.data.data;
        }
-       
-       console.log(response)
     });
 </script>
 

@@ -25,10 +25,10 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/reports', [DashboardController::class, 'reports'])->name('reports');
-    Route::post('/get-reports', [DashboardController::class, 'getReports'])->name('get-reports');
+    Route::get('/get-reports/{fromDate}/{toDate}/{page}', [DashboardController::class, 'getReports'])->name('get-reports');
     Route::get('/transactions', [DashboardController::class, 'transactions'])->name('transactions');
-    Route::post('/get-transactions', [DashboardController::class, 'getTransactions'])->name('get-transactions');
-    Route::post('/get-transaction', [DashboardController::class, 'getTransaction'])->name('get-transaction');
+    Route::get('/get-transactions/{fromDate}/{toDate}/{page}', [DashboardController::class, 'getTransactions'])->name('get-transactions');
+    Route::get('/get-transaction/{transactionId}', [DashboardController::class, 'getTransaction'])->name('get-transaction');
     Route::get('/clients', [DashboardController::class, 'clients'])->name('clients');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
