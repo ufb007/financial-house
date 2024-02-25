@@ -108,6 +108,7 @@
     <Head title="Reports" />
 
     <AuthenticatedLayout>
+        <div class="bg-black opacity-30 fixed top-0 left-0 z-10 w-full h-full overflow-hidden" v-if="modalActive"></div>
         <div class="modal flex flex-col items-center" v-if="modalActive">
             <button @click="modalActive = false" class="absolute top-5 right-5">Close X</button>
 
@@ -255,7 +256,7 @@
 
 <style>
     div.modal {
-        @apply w-[80%] h-[80%] bg-white rounded-3xl shadow-2xl shadow-gray-500/20 border border-gray-400 z-10 fixed overflow-hidden;
+        @apply w-[80%] h-[80%] bg-white rounded-3xl shadow-2xl shadow-gray-500/20 border border-gray-400 z-20 fixed overflow-hidden;
         top: 50%; 
         left: 50%; 
         transform: translate(-50%, -50%);
