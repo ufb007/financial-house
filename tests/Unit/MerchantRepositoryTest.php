@@ -25,8 +25,8 @@ it('sets the api_token in the session if it does not exist', function () {
 });
 
 it('gets transaction reports', function() {
-    $fromDate = '2010-01-01';
-    $toDate = '2024-01-31';
+    $fromDate = '2022-01-01';
+    $toDate = '2023-01-01';
     $merchantId = 1;
 
     Http::fake([
@@ -47,33 +47,66 @@ it('gets transaction reports', function() {
     $response = $merchantRepository->getTransactionsReport($fromDate, $toDate, $merchantId);
 
     // Assert: Check if the transaction reports data is as expected
-    expect($response)->toBeArray();
+    expect($response)->toBeArray()
+        ->and($response[0])->toMatchArray([
+            'currency' => 'TRY',
+            'count' => 10,
+            'total' => 350961,
+        ]);
 });
 
 it('gets transactions list', function () {
     // Arrange: Define the input parameters for the test
-    $fromDate = '2022-01-01';
+    $fromDate = '2010-01-01';
     $toDate = '2023-01-01';
     $page = 1;
 
+    $data = [
+        [
+            "fx" => [
+                "merchant" => [
+                    "originalAmount" => 1000,
+                    "originalCurrency" => "TRY",
+                    "convertedAmount" => 1000,
+                    "convertedCurrency" => "TRY"
+                ]
+            ],
+            "updated_at" => "2020-11-23 23:26:54",
+            "created_at" => "2020-11-23 23:26:53",
+            "acquirer" => [
+                "id" => 41,
+                "name" => "Bank Transfer [BTP]",
+                "code" => "BTP",
+                "type" => "BANKTRANSFER"
+            ],
+            "transaction" => [
+                "merchant" => [
+                    "referenceNo" => "Test-Denem-Mongo-1",
+                    "status" => "DECLINED",
+                    "customData" => "",
+                    "type" => "AUTH",
+                    "operation" => "3D",
+                    "created_at" => "2020-11-23 23:26:53",
+                    "message" => "Decline",
+                    "transactionId" => "1030245-1606174013-1307"
+                ]
+            ],
+            "customerInfo" => [
+                "billingFirstName" => "CEM",
+                "billingLastName" => "VAROL",
+                "email" => "cem@freelancer.run"
+            ],
+            "merchant" => [
+                "id" => 1307,
+                "name" => "G-Merchant"
+            ]
+        ]
+    ];
+
     // Prepare a fake Http response for the transaction list endpoint
     Http::fake([
-        'transactions/list' => Http::response([
-            'status' => 'APPROVED',
-            'data' => [
-                [
-                    'transactionId' => 'tx123',
-                    'amount' => 100,
-                    'currency' => 'USD',
-                    'status' => 'completed',
-                ],
-                [
-                    'transactionId' => 'tx124',
-                    'amount' => 200,
-                    'currency' => 'EUR',
-                    'status' => 'pending',
-                ]
-            ]
+        "transaction/list?page=$page" => Http::response([
+            'data' => $data
         ], 200)
     ]);
 
@@ -81,12 +114,9 @@ it('gets transactions list', function () {
     $merchantRepository = new MerchantRepository();
     $response = $merchantRepository->getTransactionList($fromDate, $toDate, $page);
 
+    $json = json_encode($response->data);
+
     // Assert: Verify the response is as expected
-    expect($response)->toBeArray()
-        ->and($response[0])->toMatchArray([
-            'transactionId' => 'tx123',
-            'amount' => 100,
-            'currency' => 'USD',
-            'status' => 'completed',
-        ]);
+    expect($response->data)->toBeArray()
+        ->and(json_decode($json, true))->toMatchArray($data);
 });
