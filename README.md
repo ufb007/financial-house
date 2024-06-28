@@ -7,7 +7,7 @@
     - Vue3
     - Pest (Unit Testing)
 
-Install backend dependencies install
+Install backend dependencies
 
 ```
 composer install
